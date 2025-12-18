@@ -1,4 +1,5 @@
-import PayPalButton from "../components/PayPalButton";
+// src/steps/StepReviewPay.jsx
+import PayPalButton from "../components/PayPalButton.jsx";
 
 export default function StepReviewPay({ formData, onBack, onReset }) {
   return (
@@ -6,6 +7,7 @@ export default function StepReviewPay({ formData, onBack, onReset }) {
       <h2>Review & Pay</h2>
 
       <p><b>Package:</b> $10 – 2 songs</p>
+
       <p><b>Occasion:</b> {formData.occasion}</p>
       <p><b>Recipient:</b> {formData.recipientName}</p>
       <p><b>Style:</b> {formData.musicStyle}</p>
@@ -16,14 +18,14 @@ export default function StepReviewPay({ formData, onBack, onReset }) {
         After payment, we’ll save your request and deliver 2 songs in about 30 minutes.
       </p>
 
-      <div style={{ marginTop: 20 }}>
+      <div style={{ marginTop: 18 }}>
         <PayPalButton
           orderData={formData}
           onSuccess={() => alert("Payment successful! Your songs are on the way 🎶")}
         />
       </div>
 
-      <div style={{ marginTop: 20 }}>
+      <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
         <button onClick={onBack}>Back</button>
         <button onClick={onReset}>Start Over</button>
       </div>

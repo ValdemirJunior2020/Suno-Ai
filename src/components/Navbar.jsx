@@ -1,14 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-const FLAGS = [
-  { lng: "en", src: "/flags/us.svg", alt: "English (US)" },
-  { lng: "es", src: "/flags/es.svg", alt: "Español (España)" },
-  { lng: "fr", src: "/flags/fr.svg", alt: "Français (France)" },
-  { lng: "pt", src: "/flags/br.svg", alt: "Português (Brasil)" },
-];
-
-function FlagButton({ lng, src, alt, active, onClick }) {
+function FlagButton({ active, onClick, src, alt }) {
   return (
     <button
       type="button"
@@ -29,41 +22,50 @@ export default function Navbar() {
 
   return (
     <div className="nav">
-      <div className="nav__left">
-        <div className="nav__brand">
-          <div className="nav__title">{t("appName")}</div>
-          <div className="nav__subtitle">{t("tagline")}</div>
+      <div className="navInner">
+        <div className="navLeft">
+          <div className="navBrand">
+            <div className="navTitle">MelodyMagic</div>
+            <div className="navTag">{t("tagline")}</div>
+          </div>
+
+          <div className="navLinks">
+            <NavLink to="/order" className={({ isActive }) => (isActive ? "navLink active" : "navLink")}>
+              {t("navOrder")}
+            </NavLink>
+            <NavLink to="/media" className={({ isActive }) => (isActive ? "navLink active" : "navLink")}>
+              {t("navMedia")}
+            </NavLink>
+          </div>
         </div>
 
-        <div className="nav__links">
-          <NavLink
-            to="/order"
-            className={({ isActive }) => `navLink ${isActive ? "active" : ""}`}
-          >
-            Order
-          </NavLink>
-
-          <NavLink
-            to="/media"
-            className={({ isActive }) => `navLink ${isActive ? "active" : ""}`}
-          >
-            Media Examples
-          </NavLink>
-        </div>
-      </div>
-
-      <div className="nav__right">
-        <div className="flagRow" aria-label={t("language")}>
-          {FLAGS.map((f) => (
+        <div className="navRight">
+          <div className="flagRow">
             <FlagButton
-              key={f.lng}
-              lng={f.lng}
-              src={f.src}
-              alt={f.alt}
-              active={i18n.language === f.lng}
-              onClick={() => setLang(f.lng)}
+              active={i18n.language === "en"}
+              onClick={() => setLang("en")}
+              src="/flags/us.svg"
+              alt="English (US)"
             />
-          ))}
+            <FlagButton
+              active={i18n.language === "es"}
+              onClick={() => setLang("es")}
+              src="/flags/es.svg"
+              alt="Español (España)"
+            />
+            <FlagButton
+              active={i18n.language === "fr"}
+              onClick={() => setLang("fr")}
+              src="/flags/fr.svg"
+              alt="Français (France)"
+            />
+            <FlagButton
+              active={i18n.language === "pt"}
+              onClick={() => setLang("pt")}
+              src="/flags/br.svg"
+              alt="Português (Brasil)"
+            />
+          </div>
         </div>
       </div>
     </div>

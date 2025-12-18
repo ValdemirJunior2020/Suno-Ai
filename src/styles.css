@@ -539,3 +539,59 @@ input::placeholder {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+/* ===== NAVBAR layout ===== */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* left + right */
+  gap: 14px;
+}
+
+/* left side (brand + links) */
+.navLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* right side (flags) */
+.navRight {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* flag buttons */
+.flagRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.flagBtn {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.10);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.flagBtn.active {
+  border-color: rgba(79, 176, 245, 0.85);
+  box-shadow: 0 0 0 3px rgba(79, 176, 245, 0.22);
+}
+
+.flagBtn img {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  object-fit: cover;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35));
+}
+.nav a { color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 800; padding: 8px 10px; border-radius: 999px; }
+.nav a.activeLink { background: rgba(79,176,245,0.25); border: 1px solid rgba(79,176,245,0.55); }
