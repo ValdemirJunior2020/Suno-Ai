@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import MediaExamples from "./pages/MediaExamples.jsx";
 import OrderFlow from "./pages/OrderFlow.jsx";
-import Success from "./pages/Success.jsx";
 
 export default function App() {
   return (
@@ -15,7 +14,6 @@ export default function App() {
             <Route path="/" element={<Navigate to="/order" replace />} />
             <Route path="/order" element={<OrderFlow />} />
             <Route path="/media" element={<MediaExamples />} />
-            <Route path="/success" element={<Success />} />
             <Route path="*" element={<Navigate to="/order" replace />} />
           </Routes>
         </div>

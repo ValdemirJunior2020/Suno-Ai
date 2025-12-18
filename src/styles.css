@@ -595,3 +595,114 @@ input::placeholder {
 }
 .nav a { color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 800; padding: 8px 10px; border-radius: 999px; }
 .nav a.activeLink { background: rgba(79,176,245,0.25); border: 1px solid rgba(79,176,245,0.55); }
+.navBar{
+  width:100%;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.08) 100%);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  padding: 14px 14px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.navLeft{
+  display:flex;
+  align-items:center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.navBrand{
+  display:flex;
+  flex-direction:column;
+  min-width: 0;
+}
+
+.navTitle{
+  font-weight: 900;
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.navSub{
+  opacity: 0.85;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.navLinks{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.navLink{
+  text-decoration:none;
+  color: var(--text);
+  font-weight: 900;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.18);
+}
+
+.navLink.active{
+  border-color: var(--btn-primary-border);
+  background: var(--btn-primary);
+}
+
+.navRight{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+}
+
+.flagRow{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+}
+
+.flagBtn{
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(0,0,0,0.20);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+}
+
+.flagBtn:hover{ transform: translateY(-1px); }
+
+.flagBtn.active{
+  border-color: var(--btn-primary-border);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.35);
+}
+
+.flag{
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  object-fit: cover;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.28);
+}
+
+@media (max-width: 720px){
+  .navBar{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .navRight{
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
