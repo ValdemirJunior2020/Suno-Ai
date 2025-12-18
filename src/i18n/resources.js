@@ -1,22 +1,14 @@
 // src/i18n/resources.js
-export const resources = {
+const resources = {
   en: {
     translation: {
       appName: "MelodyMagic",
-      tagline: "Custom AI songs for birthdays, tributes, and special moments.",
+      tagline: "Create personalized AI songs in minutes",
+
       language: "Language",
       step: "Step",
-      back: "Back",
-      next: "Next",
-      saving: "Saving...",
-      saved: "Saved! ✅",
-      error: "Error:",
-      requiredMissing: "Missing required fields",
 
-      customerName: "Your name",
-      customerPhone: "Your phone number",
-      phoneInvalid: "Phone number looks invalid",
-
+      // Wizard
       occasion: "Occasion",
       occasionBirthday: "Birthday",
       occasionAnniversary: "Anniversary",
@@ -28,7 +20,7 @@ export const resources = {
       aboutPerson: "About the person",
       recipientName: "Recipient name",
       relationship: "Relationship",
-      dedication: "Dedication / message",
+      dedication: "Dedication message (details, personality, memories, etc.)",
 
       songStyle: "Song style",
       stylePop: "Pop",
@@ -48,30 +40,44 @@ export const resources = {
 
       reviewPay: "Review & Pay",
       packageTitle: "Package",
-      packageDesc: "$10 — 2 Custom Songs",
-      contact: "WhatsApp",
+      packageDesc: "$10 — 2 songs",
+      contact: "Need help? WhatsApp",
 
-      payNote:
-        "After payment, we’ll save your request and deliver 2 songs within 24 hours (usually much faster)."
-    }
+      payNote: "After payment, we’ll save your request and deliver 2 songs in about 30 minutes.",
+
+      back: "Back",
+      next: "Next",
+      saving: "Saving order...",
+      saved: "Saved! ✅ Your order was recorded.",
+      error: "Error:",
+
+      // ✅ New required buyer fields
+      customerName: "Your name",
+      customerPhone: "Your phone number",
+      requiredMissing: "Missing required fields",
+
+      // Navbar / Media
+      navOrder: "Order",
+      navMedia: "Media Examples",
+
+      mediaTitle: "Example Songs",
+      mediaSubtitle: "Listen to a few samples before placing your order.",
+      mediaSong1: "Song Example 1",
+      mediaSong2: "Song Example 2",
+      mediaSong3: "Song Example 3",
+      nowPlaying: "Now playing",
+      audioNotSupported: "Your browser does not support audio playback.",
+      mediaTip: "Tip: Replace the files in public/media to update these samples."
+    },
   },
 
   es: {
     translation: {
       appName: "MelodyMagic",
-      tagline: "Canciones personalizadas con IA para cumpleaños, homenajes y momentos especiales.",
+      tagline: "Crea canciones personalizadas con IA en minutos",
+
       language: "Idioma",
       step: "Paso",
-      back: "Atrás",
-      next: "Siguiente",
-      saving: "Guardando...",
-      saved: "¡Guardado! ✅",
-      error: "Error:",
-      requiredMissing: "Faltan campos obligatorios",
-
-      customerName: "Tu nombre",
-      customerPhone: "Tu número de teléfono",
-      phoneInvalid: "El número de teléfono parece inválido",
 
       occasion: "Ocasión",
       occasionBirthday: "Cumpleaños",
@@ -84,9 +90,9 @@ export const resources = {
       aboutPerson: "Sobre la persona",
       recipientName: "Nombre del destinatario",
       relationship: "Relación",
-      dedication: "Dedicatoria / mensaje",
+      dedication: "Mensaje de dedicatoria (detalles, personalidad, recuerdos, etc.)",
 
-      songStyle: "Estilo de música",
+      songStyle: "Estilo musical",
       stylePop: "Pop",
       styleRock: "Rock",
       styleSertanejo: "Sertanejo",
@@ -95,52 +101,64 @@ export const resources = {
       styleGospel: "Gospel",
       styleOther: "Otro",
 
-      mood: "Estado de ánimo",
+      mood: "Clima",
       moodHappy: "Feliz",
-      moodEmotional: "Emotivo",
+      moodEmotional: "Emocional",
       moodRomantic: "Romántico",
       moodMotivational: "Motivacional",
       moodOther: "Otro",
 
       reviewPay: "Revisar y pagar",
       packageTitle: "Paquete",
-      packageDesc: "$10 — 2 canciones personalizadas",
-      contact: "WhatsApp",
+      packageDesc: "$10 — 2 canciones",
+      contact: "¿Necesitas ayuda? WhatsApp",
 
-      payNote:
-        "Después del pago, guardaremos tu solicitud y entregaremos 2 canciones en 24 horas (normalmente mucho antes)."
-    }
+      payNote: "Después del pago, guardaremos tu solicitud y entregaremos 2 canciones en aproximadamente 30 minutos.",
+
+      back: "Atrás",
+      next: "Siguiente",
+      saving: "Guardando pedido...",
+      saved: "¡Guardado! ✅ Tu pedido fue registrado.",
+      error: "Error:",
+
+      customerName: "Tu nombre",
+      customerPhone: "Tu número de teléfono",
+      requiredMissing: "Faltan campos obligatorios",
+
+      navOrder: "Pedido",
+      navMedia: "Ejemplos",
+
+      mediaTitle: "Canciones de ejemplo",
+      mediaSubtitle: "Escucha algunas muestras antes de hacer tu pedido.",
+      mediaSong1: "Ejemplo 1",
+      mediaSong2: "Ejemplo 2",
+      mediaSong3: "Ejemplo 3",
+      nowPlaying: "Reproduciendo",
+      audioNotSupported: "Tu navegador no admite reproducción de audio.",
+      mediaTip: "Consejo: Reemplaza los archivos en public/media para actualizar las muestras."
+    },
   },
 
   fr: {
     translation: {
       appName: "MelodyMagic",
-      tagline: "Chansons IA personnalisées pour anniversaires, hommages et moments spéciaux.",
+      tagline: "Créez des chansons personnalisées avec l’IA en quelques minutes",
+
       language: "Langue",
       step: "Étape",
-      back: "Retour",
-      next: "Suivant",
-      saving: "Enregistrement...",
-      saved: "Enregistré ! ✅",
-      error: "Erreur :",
-      requiredMissing: "Champs obligatoires manquants",
-
-      customerName: "Votre nom",
-      customerPhone: "Votre numéro de téléphone",
-      phoneInvalid: "Le numéro de téléphone semble invalide",
 
       occasion: "Occasion",
       occasionBirthday: "Anniversaire",
-      occasionAnniversary: "Anniversaire de mariage",
+      occasionAnniversary: "Anniversaire de couple",
       occasionGraduation: "Remise de diplôme",
       occasionTribute: "Hommage",
       occasionOther: "Autre",
-      otherPlaceholder: "Tapez ici...",
+      otherPlaceholder: "Écrivez ici...",
 
       aboutPerson: "À propos de la personne",
       recipientName: "Nom du destinataire",
       relationship: "Relation",
-      dedication: "Dédicace / message",
+      dedication: "Message de dédicace (détails, personnalité, souvenirs, etc.)",
 
       songStyle: "Style musical",
       stylePop: "Pop",
@@ -152,51 +170,64 @@ export const resources = {
       styleOther: "Autre",
 
       mood: "Ambiance",
-      moodHappy: "Joyeuse",
-      moodEmotional: "Émouvante",
+      moodHappy: "Joyeux",
+      moodEmotional: "Émotionnel",
       moodRomantic: "Romantique",
-      moodMotivational: "Motivante",
+      moodMotivational: "Motivant",
       moodOther: "Autre",
 
-      reviewPay: "Vérifier & payer",
+      reviewPay: "Vérifier et payer",
       packageTitle: "Forfait",
-      packageDesc: "10$ — 2 chansons personnalisées",
-      contact: "WhatsApp",
+      packageDesc: "$10 — 2 chansons",
+      contact: "Besoin d’aide ? WhatsApp",
 
-      payNote:
-        "Après le paiement, nous enregistrerons votre demande et livrerons 2 chansons sous 24 heures (souvent plus vite)."
-    }
+      payNote: "Après paiement, nous enregistrerons votre demande et livrerons 2 chansons en environ 30 minutes.",
+
+      back: "Retour",
+      next: "Suivant",
+      saving: "Enregistrement en cours...",
+      saved: "Enregistré ! ✅ Votre commande a été enregistrée.",
+      error: "Erreur :",
+
+
+      customerName: "Votre nom",
+      customerPhone: "Votre numéro de téléphone",
+      requiredMissing: "Champs obligatoires manquants",
+
+      navOrder: "Commander",
+      navMedia: "Exemples",
+
+      mediaTitle: "Exemples de chansons",
+      mediaSubtitle: "Écoutez quelques extraits avant de commander.",
+      mediaSong1: "Exemple 1",
+      mediaSong2: "Exemple 2",
+      mediaSong3: "Exemple 3",
+      nowPlaying: "Lecture en cours",
+      audioNotSupported: "Votre navigateur ne prend pas en charge l’audio.",
+      mediaTip: "Astuce : Remplacez les fichiers dans public/media pour mettre à jour les extraits."
+    },
   },
 
   pt: {
     translation: {
       appName: "MelodyMagic",
-      tagline: "Músicas personalizadas com IA para aniversários, homenagens e momentos especiais.",
+      tagline: "Crie músicas personalizadas com IA em minutos",
+
       language: "Idioma",
       step: "Etapa",
-      back: "Voltar",
-      next: "Próximo",
-      saving: "Salvando...",
-      saved: "Salvo! ✅",
-      error: "Erro:",
-      requiredMissing: "Campos obrigatórios ausentes",
-
-      customerName: "Seu nome",
-      customerPhone: "Seu número de telefone",
-      phoneInvalid: "O número de telefone parece inválido",
 
       occasion: "Ocasião",
       occasionBirthday: "Aniversário",
-      occasionAnniversary: "Aniversário de casamento",
+      occasionAnniversary: "Aniversário de namoro/casamento",
       occasionGraduation: "Formatura",
       occasionTribute: "Homenagem",
       occasionOther: "Outro",
       otherPlaceholder: "Digite aqui...",
 
       aboutPerson: "Sobre a pessoa",
-      recipientName: "Nome do homenageado",
+      recipientName: "Nome da pessoa",
       relationship: "Relação",
-      dedication: "Dedicação / mensagem",
+      dedication: "Mensagem de dedicação (detalhes, personalidade, memórias, etc.)",
 
       songStyle: "Estilo da música",
       stylePop: "Pop",
@@ -214,13 +245,36 @@ export const resources = {
       moodMotivational: "Motivacional",
       moodOther: "Outro",
 
-      reviewPay: "Revisar & pagar",
+      reviewPay: "Revisar e pagar",
       packageTitle: "Pacote",
-      packageDesc: "$10 — 2 músicas personalizadas",
-      contact: "WhatsApp",
+      packageDesc: "$10 — 2 músicas",
+      contact: "Precisa de ajuda? WhatsApp",
 
-      payNote:
-        "Após o pagamento, vamos salvar seu pedido e entregar 2 músicas em até 24 horas (geralmente bem mais rápido)."
-    }
-  }
+      payNote: "Após o pagamento, vamos salvar seu pedido e entregar 2 músicas em cerca de 30 minutos.",
+
+      back: "Voltar",
+      next: "Próximo",
+      saving: "Salvando pedido...",
+      saved: "Salvo! ✅ Seu pedido foi registrado.",
+      error: "Erro:",
+
+      customerName: "Seu nome",
+      customerPhone: "Seu número de telefone",
+      requiredMissing: "Campos obrigatórios faltando",
+
+      navOrder: "Pedido",
+      navMedia: "Exemplos",
+
+      mediaTitle: "Músicas de exemplo",
+      mediaSubtitle: "Ouça algumas amostras antes de fazer seu pedido.",
+      mediaSong1: "Exemplo 1",
+      mediaSong2: "Exemplo 2",
+      mediaSong3: "Exemplo 3",
+      nowPlaying: "Tocando agora",
+      audioNotSupported: "Seu navegador não suporta reprodução de áudio.",
+      mediaTip: "Dica: Troque os arquivos em public/media para atualizar os exemplos."
+    },
+  },
 };
+
+export default resources;
