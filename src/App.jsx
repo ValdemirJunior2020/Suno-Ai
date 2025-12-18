@@ -4,6 +4,7 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const SHEETS_API_URL = import.meta.env.VITE_SHEETS_API_URL;
 const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID;
+
 const WHATSAPP_NUMBER = "7543669922";
 
 function uid() {
@@ -16,10 +17,16 @@ export default function App() {
   const [step, setStep] = useState(1);
   const [savedStatus, setSavedStatus] = useState("idle"); // idle | saving | saved | error
   const [errorMsg, setErrorMsg] = useState("");
+  const [validationMsg, setValidationMsg] = useState("");
 
   const [form, setForm] = useState({
     package: "2_songs",
     priceUSD: 10,
+
+    // ✅ NEW: buyer info (required)
+    customerName: "",
+    customerPhone: "",
+
     occasion: "Birthday",
     occasionOther: "",
     recipientName: "",
@@ -30,36 +37,68 @@ export default function App() {
     mood: "Happy",
     moodOther: "",
     languages: "en",
-    whatsapp: WHATSAPP_NUMBER
+    whatsapp: WHATSAPP_NUMBER,
   });
 
   const occasionValue = form.occasion === "Other" ? form.occasionOther : form.occasion;
   const styleValue = form.musicStyle === "Other" ? form.musicStyleOther : form.musicStyle;
   const moodValue = form.mood === "Other" ? form.moodOther : form.mood;
 
-  const canGoNext = useMemo(() => {
-    if (step === 1) return !!occasionValue?.trim();
-    if (step === 2) return !!form.recipientName.trim() && !!form.relationship.trim() && !!form.dedication.trim();
-    if (step === 3) return !!styleValue?.trim() && !!moodValue?.trim();
-    return true;
-  }, [step, occasionValue, styleValue, moodValue, form]);
-
   function setField(key, value) {
     setForm((prev) => ({ ...prev, [key]: value }));
-  }
-
-  function next() {
-    if (!canGoNext) return;
-    setStep((s) => Math.min(4, s + 1));
-  }
-
-  function back() {
-    setStep((s) => Math.max(1, s - 1));
+    setValidationMsg("");
   }
 
   function switchLang(lng) {
     i18n.changeLanguage(lng);
     setField("languages", lng);
+  }
+
+  function getMissingForStep(s) {
+    const missing = [];
+
+    if (s === 1) {
+      if (!form.occasion?.trim()) missing.push(t("occasion") || "Occasion");
+      if (form.occasion === "Other" && !form.occasionOther.trim())
+        missing.push(t("occasionOther") || "Occasion (Other)");
+    }
+
+    if (s === 2) {
+      if (!form.customerName.trim()) missing.push(t("customerName") || "Your name");
+      if (!form.customerPhone.trim()) missing.push(t("customerPhone") || "Your phone number");
+
+      if (!form.recipientName.trim()) missing.push(t("recipientName") || "Recipient name");
+      if (!form.relationship.trim()) missing.push(t("relationship") || "Relationship");
+      if (!form.dedication.trim()) missing.push(t("dedication") || "Dedication");
+    }
+
+    if (s === 3) {
+      if (!form.musicStyle?.trim()) missing.push(t("songStyle") || "Music style");
+      if (form.musicStyle === "Other" && !form.musicStyleOther.trim())
+        missing.push(t("styleOther") || "Music style (Other)");
+
+      if (!form.mood?.trim()) missing.push(t("mood") || "Mood");
+      if (form.mood === "Other" && !form.moodOther.trim())
+        missing.push(t("moodOther") || "Mood (Other)");
+    }
+
+    return missing;
+  }
+
+  const canGoNext = useMemo(() => getMissingForStep(step).length === 0, [step, form]);
+
+  function next() {
+    const missing = getMissingForStep(step);
+    if (missing.length) {
+      setValidationMsg(`${t("requiredMissing") || "Missing required fields"}: ${missing.join(", ")}`);
+      return;
+    }
+    setStep((s) => Math.min(4, s + 1));
+  }
+
+  function back() {
+    setValidationMsg("");
+    setStep((s) => Math.max(1, s - 1));
   }
 
   async function saveToSheet({ orderId, payerEmail, status }) {
@@ -73,6 +112,11 @@ export default function App() {
       package: "2_songs",
       priceUSD: 10,
       payerEmail: payerEmail || "",
+
+      // ✅ NEW fields
+      customerName: form.customerName,
+      customerPhone: form.customerPhone,
+
       status,
       occasion: occasionValue,
       recipientName: form.recipientName,
@@ -81,13 +125,13 @@ export default function App() {
       musicStyle: styleValue,
       mood: moodValue,
       languages: form.languages,
-      whatsapp: form.whatsapp || WHATSAPP_NUMBER
+      whatsapp: form.whatsapp || WHATSAPP_NUMBER,
     };
 
     const res = await fetch(SHEETS_API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
@@ -98,13 +142,29 @@ export default function App() {
     setSavedStatus("saved");
   }
 
+  // ✅ PayPal provider expects "client-id" (NOT clientId)
   const paypalOptions = useMemo(() => {
     return {
-      clientId: PAYPAL_CLIENT_ID || "test",
+      "client-id": PAYPAL_CLIENT_ID || "",
       currency: "USD",
-      intent: "CAPTURE"
+      intent: "CAPTURE",
+      components: "buttons",
     };
-  }, []);
+  }, [PAYPAL_CLIENT_ID]);
+
+  // Block checkout if any step would still fail
+  const checkoutMissing = useMemo(() => {
+    const all = [
+      ...getMissingForStep(1),
+      ...getMissingForStep(2),
+      ...getMissingForStep(3),
+    ];
+    // de-dup
+    return Array.from(new Set(all));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form, t]);
+
+  const checkoutValid = checkoutMissing.length === 0;
 
   return (
     <div className="page">
@@ -114,23 +174,50 @@ export default function App() {
             <div className="brand">
               <h1>{t("appName")}</h1>
               <p>{t("tagline")}</p>
+
+              <div className="notice small">
+                Env check — PayPal ID loaded: <b>{PAYPAL_CLIENT_ID ? "YES" : "NO"}</b>
+              </div>
             </div>
 
-            <div className="lang">
-              <span className="small">{t("language")}:</span>
-              <button className={i18n.language === "en" ? "active" : ""} onClick={() => switchLang("en")}>EN</button>
-              <button className={i18n.language === "es" ? "active" : ""} onClick={() => switchLang("es")}>ES</button>
-              <button className={i18n.language === "fr" ? "active" : ""} onClick={() => switchLang("fr")}>FR</button>
-              <button className={i18n.language === "pt" ? "active" : ""} onClick={() => switchLang("pt")}>PT</button>
-            </div>
+           <div className="lang">
+  <span className="small">{t("language")}:</span>
+
+  <button className={i18n.language === "en" ? "active" : ""} onClick={() => switchLang("en")}>
+    <img className="flag" src="/flags/us.svg" alt="US" />
+    EN
+  </button>
+
+  <button className={i18n.language === "es" ? "active" : ""} onClick={() => switchLang("es")}>
+    <img className="flag" src="/flags/es.svg" alt="ES" />
+    ES
+  </button>
+
+  <button className={i18n.language === "fr" ? "active" : ""} onClick={() => switchLang("fr")}>
+    <img className="flag" src="/flags/fr.svg" alt="FR" />
+    FR
+  </button>
+
+  <button className={i18n.language === "pt" ? "active" : ""} onClick={() => switchLang("pt")}>
+    <img className="flag" src="/flags/br.svg" alt="BR" />
+    PT
+  </button>
+</div>
+
           </div>
 
           <div className="card">
-            <div className="small">{t("step")} {step} / 4</div>
+            <div className="small">
+              {t("step")} {step} / 4
+            </div>
 
+            {validationMsg && <div className="error" style={{ marginTop: 10 }}>{validationMsg}</div>}
+
+            {/* STEP 1 */}
             {step === 1 && (
               <>
                 <h2 style={{ margin: "10px 0 8px" }}>{t("occasion")}</h2>
+
                 <div className="row">
                   <div>
                     <label>{t("occasion")}</label>
@@ -157,10 +244,32 @@ export default function App() {
               </>
             )}
 
+            {/* STEP 2 */}
             {step === 2 && (
               <>
                 <h2 style={{ margin: "10px 0 8px" }}>{t("aboutPerson")}</h2>
+
                 <div className="row">
+                  <div>
+                    <label>{t("customerName")}</label>
+                    <input
+                      value={form.customerName}
+                      onChange={(e) => setField("customerName", e.target.value)}
+                      placeholder="John Doe"
+                    />
+                  </div>
+
+                  <div>
+                    <label>{t("customerPhone")}</label>
+                    <input
+                      value={form.customerPhone}
+                      onChange={(e) => setField("customerPhone", e.target.value)}
+                      placeholder="+1 754 366 9922"
+                    />
+                  </div>
+                </div>
+
+                <div className="row" style={{ marginTop: 12 }}>
                   <div>
                     <label>{t("recipientName")}</label>
                     <input value={form.recipientName} onChange={(e) => setField("recipientName", e.target.value)} />
@@ -178,6 +287,7 @@ export default function App() {
               </>
             )}
 
+            {/* STEP 3 */}
             {step === 3 && (
               <>
                 <h2 style={{ margin: "10px 0 8px" }}>{t("songStyle")}</h2>
@@ -223,6 +333,7 @@ export default function App() {
               </>
             )}
 
+            {/* STEP 4 */}
             {step === 4 && (
               <>
                 <h2 style={{ margin: "10px 0 8px" }}>{t("reviewPay")}</h2>
@@ -230,7 +341,7 @@ export default function App() {
                 <div className="row">
                   <div>
                     <div className="small">{t("packageTitle")}</div>
-                    <div style={{ fontSize: 18, fontWeight: 800 }}>{t("packageDesc")}</div>
+                    <div style={{ fontSize: 18, fontWeight: 900 }}>{t("packageDesc")}</div>
                   </div>
                   <div>
                     <div className="small">{t("contact")}: <strong>{WHATSAPP_NUMBER}</strong></div>
@@ -241,67 +352,91 @@ export default function App() {
 
                 <div className="row">
                   <div>
+                    <div className="small">{t("customerName")}</div>
+                    <div style={{ fontWeight: 800 }}>{form.customerName}</div>
+                  </div>
+                  <div>
+                    <div className="small">{t("customerPhone")}</div>
+                    <div style={{ fontWeight: 800 }}>{form.customerPhone}</div>
+                  </div>
+                </div>
+
+                <div className="row" style={{ marginTop: 10 }}>
+                  <div>
                     <div className="small">{t("occasion")}</div>
-                    <div style={{ fontWeight: 700 }}>{occasionValue}</div>
+                    <div style={{ fontWeight: 800 }}>{occasionValue}</div>
                   </div>
                   <div>
                     <div className="small">{t("recipientName")}</div>
-                    <div style={{ fontWeight: 700 }}>{form.recipientName}</div>
+                    <div style={{ fontWeight: 800 }}>{form.recipientName}</div>
                   </div>
                   <div>
                     <div className="small">{t("songStyle")}</div>
-                    <div style={{ fontWeight: 700 }}>{styleValue}</div>
+                    <div style={{ fontWeight: 800 }}>{styleValue}</div>
                   </div>
                   <div>
                     <div className="small">{t("mood")}</div>
-                    <div style={{ fontWeight: 700 }}>{moodValue}</div>
+                    <div style={{ fontWeight: 800 }}>{moodValue}</div>
                   </div>
                 </div>
 
                 <div style={{ marginTop: 12 }}>
                   <div className="small">{t("dedication")}</div>
-                  <div style={{ whiteSpace: "pre-wrap", fontWeight: 600 }}>{form.dedication}</div>
+                  <div style={{ whiteSpace: "pre-wrap", fontWeight: 650 }}>{form.dedication}</div>
                 </div>
 
                 <div className="hr"></div>
 
-                <div style={{ marginBottom: 10, opacity: 0.95 }}>{t("payNote")}</div>
+                <div style={{ marginBottom: 10, opacity: 0.95 }}>
+                  {t("payNote")}
+                </div>
 
-                <PayPalScriptProvider options={paypalOptions}>
-                  <PayPalButtons
-                    style={{ layout: "vertical" }}
-                    disabled={savedStatus === "saving"}
-                    createOrder={(data, actions) => {
-                      return actions.order.create({
-                        purchase_units: [
-                          { description: "MelodyMagic - 2 songs", amount: { currency_code: "USD", value: "10.00" } }
-                        ]
-                      });
-                    }}
-                    onApprove={async (data, actions) => {
-                      try {
-                        setSavedStatus("saving");
-                        setErrorMsg("");
+                {!checkoutValid && (
+                  <div className="error" style={{ marginBottom: 10 }}>
+                    {t("requiredMissing") || "Missing required fields"}: {checkoutMissing.join(", ")}
+                  </div>
+                )}
 
-                        const details = await actions.order.capture();
-                        const payerEmail = details?.payer?.email_address || "";
-
-                        await saveToSheet({
-                          orderId: data.orderID || uid(),
-                          payerEmail,
-                          status: "PAID"
+                {!PAYPAL_CLIENT_ID ? (
+                  <div className="error">PayPal is not configured. Add VITE_PAYPAL_CLIENT_ID in .env and restart.</div>
+                ) : (
+                  <PayPalScriptProvider options={paypalOptions}>
+                    <PayPalButtons
+                      style={{ layout: "vertical" }}
+                      disabled={!checkoutValid || savedStatus === "saving"}
+                      forceReRender={[checkoutValid, savedStatus]}
+                      createOrder={(data, actions) => {
+                        return actions.order.create({
+                          purchase_units: [
+                            {
+                              description: "MelodyMagic - 2 songs",
+                              amount: { currency_code: "USD", value: "10.00" },
+                            },
+                          ],
                         });
-                      } catch (err) {
+                      }}
+                      onApprove={async (data, actions) => {
+                        try {
+                          const details = await actions.order.capture();
+                          const payerEmail = details?.payer?.email_address || "";
+
+                          await saveToSheet({
+                            orderId: data.orderID || uid(),
+                            payerEmail,
+                            status: "PAID",
+                          });
+                        } catch (err) {
+                          setSavedStatus("error");
+                          setErrorMsg(String(err?.message || err));
+                        }
+                      }}
+                      onError={(err) => {
                         setSavedStatus("error");
-                        setErrorMsg(String(err?.message || err));
-                      }
-                    }}
-                    onError={(err) => {
-                      setSavedStatus("error");
-                      setErrorMsg(String(err));
-                    }}
-                  />
-                </PayPalScriptProvider>
+                        setErrorMsg(String(err));
+                      }}
+                    />
+                  </PayPalScriptProvider>
+                )}
 
                 <div style={{ marginTop: 12 }}>
                   {savedStatus === "saving" && <div className="small">{t("saving")}</div>}
@@ -327,8 +462,11 @@ export default function App() {
                     setStep(1);
                     setSavedStatus("idle");
                     setErrorMsg("");
+                    setValidationMsg("");
                     setForm((p) => ({
                       ...p,
+                      customerName: "",
+                      customerPhone: "",
                       occasion: "Birthday",
                       occasionOther: "",
                       recipientName: "",
@@ -337,7 +475,7 @@ export default function App() {
                       musicStyle: "Pop",
                       musicStyleOther: "",
                       mood: "Happy",
-                      moodOther: ""
+                      moodOther: "",
                     }));
                   }}
                 >
@@ -348,7 +486,7 @@ export default function App() {
 
             <div className="hr"></div>
             <div className="small">
-              WhatsApp: <strong>{7543669922}</strong>
+              WhatsApp: <strong>{WHATSAPP_NUMBER}</strong>
             </div>
           </div>
         </div>

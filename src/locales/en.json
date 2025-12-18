@@ -34,8 +34,11 @@
   "moodMotivational": "Motivational",
   "moodOther": "Other",
   "contact": "Need help? WhatsApp",
-  "payNote": "After payment, we’ll save your request and deliver 2 songs.",
+  "payNote": "After payment, we’ll save your request and deliver 2 songs in about 30 minutes.",
   "saving": "Saving your order…",
   "saved": "Order saved! 🎉",
-  "error": "Something went wrong."
+  "error": "Something went wrong.",
+  "customerName": "Your name",
+"customerPhone": "Your phone number",
+"requiredMissing": "Missing required fields"
 }

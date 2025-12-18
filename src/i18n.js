@@ -11,11 +11,11 @@ i18n.use(initReactI18next).init({
     en: { translation: en },
     es: { translation: es },
     fr: { translation: fr },
-    pt: { translation: pt }
+    pt: { translation: pt },
   },
   lng: "en",
   fallbackLng: "en",
-  interpolation: { escapeValue: false }
+  interpolation: { escapeValue: false },
 });
 
 export default i18n;
