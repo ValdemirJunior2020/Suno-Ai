@@ -1,5 +1,5 @@
 /* ===============================
-   Base
+   Base (MOBILE-FIRST)
 ================================ */
 * {
   box-sizing: border-box;
@@ -32,14 +32,15 @@ body {
 }
 
 /* ===============================
-   Background
+   Background (MOBILE-FIRST)
 ================================ */
 .page {
   min-height: 100vh;
   background-image: url("/bg.png");
   background-size: cover;
   background-position: center;
-  background-attachment: fixed;
+  /* mobile-friendly (fixed can lag on phones) */
+  background-attachment: scroll;
 }
 
 .overlay {
@@ -48,11 +49,12 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 28px 14px;
+  /* tighter for phones */
+  padding: 16px 12px;
 }
 
 /* ===============================
-   Layout
+   Layout (MOBILE-FIRST)
 ================================ */
 .container {
   width: 100%;
@@ -61,15 +63,15 @@ body {
 
 .header {
   display: flex;
+  flex-direction: column; /* mobile-first */
   align-items: flex-start;
-  justify-content: space-between;
   gap: 12px;
   margin-bottom: 14px;
 }
 
 .brand h1 {
   margin: 0;
-  font-size: 34px;
+  font-size: 26px; /* mobile-first */
   letter-spacing: 0.2px;
 }
 
@@ -78,17 +80,19 @@ body {
   color: var(--muted);
   max-width: 560px;
   line-height: 1.35;
+  font-size: 14px;
 }
 
 /* ===============================
-   Language buttons (with flags)
+   Language buttons (with flags) (MOBILE-FIRST)
 ================================ */
 .lang {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start; /* mobile-first */
 }
 
 .lang .small {
@@ -108,6 +112,8 @@ body {
   cursor: pointer;
   font-weight: 700;
   letter-spacing: 0.2px;
+  /* better touch */
+  min-height: 36px;
 }
 
 .lang button:hover {
@@ -119,15 +125,23 @@ body {
   background: var(--btn-primary);
 }
 
+.flag {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  object-fit: cover;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
 /* ===============================
-   Card / Glass
+   Card / Glass (MOBILE-FIRST)
 ================================ */
 .card {
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: linear-gradient(180deg, var(--glass) 0%, rgba(255,255,255,0.08) 100%);
   backdrop-filter: blur(12px);
-  border-radius: 18px;
-  padding: 18px;
+  border-radius: 16px;
+  padding: 16px;
   box-shadow: 0 16px 40px rgba(0,0,0,0.35);
 }
 
@@ -143,7 +157,7 @@ body {
 }
 
 /* ===============================
-   Form
+   Form (MOBILE-FIRST)
 ================================ */
 label {
   display: block;
@@ -155,16 +169,17 @@ label {
 
 input, select, textarea {
   width: 100%;
-  padding: 11px 12px;
+  padding: 12px 12px; /* mobile-first */
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(0,0,0,0.25);
   color: var(--text);
   outline: none;
+  font-size: 15px; /* mobile readability */
 }
 
 textarea {
-  min-height: 110px;
+  min-height: 120px;
   resize: vertical;
 }
 
@@ -172,30 +187,19 @@ input::placeholder {
   color: rgba(255,255,255,0.55);
 }
 
+/* mobile-first = 1 column */
 .row {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-@media (max-width: 820px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .lang {
-    justify-content: flex-start;
-  }
-  .row {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: 1fr;
 }
 
 /* ===============================
-   Buttons
+   Buttons (MOBILE-FIRST)
 ================================ */
 .actions {
   display: flex;
+  flex-direction: column-reverse; /* mobile-first thumb UX */
   gap: 10px;
   justify-content: space-between;
   margin-top: 16px;
@@ -203,13 +207,14 @@ input::placeholder {
 
 .btn, .btnPrimary {
   border-radius: 12px;
-  padding: 11px 14px;
+  padding: 14px 14px; /* bigger for touch */
   font-weight: 900;
   cursor: pointer;
   border: 1px solid var(--btn-border);
   background: var(--btn);
   color: var(--text);
   width: 100%;
+  font-size: 16px;
 }
 
 .btnPrimary {
@@ -223,7 +228,7 @@ input::placeholder {
 }
 
 /* ===============================
-   Notices
+   Notices (MOBILE-FIRST)
 ================================ */
 .notice {
   margin-top: 10px;
@@ -250,10 +255,54 @@ input::placeholder {
   border: 1px solid var(--success-border);
   color: var(--text);
 }
-.flag {
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  object-fit: cover;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+
+/* ===============================
+   DESKTOP ENHANCEMENTS (min-width)
+================================ */
+@media (min-width: 821px) {
+  .overlay {
+    padding: 28px 14px;
+  }
+
+  .header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .brand h1 {
+    font-size: 34px;
+  }
+
+  .brand p {
+    font-size: 15px;
+  }
+
+  .lang {
+    justify-content: flex-end;
+  }
+
+  /* desktop = 2 columns */
+  .row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* desktop buttons side-by-side */
+  .actions {
+    flex-direction: row;
+  }
+
+  /* desktop background parallax */
+  .page {
+    background-attachment: fixed;
+  }
+
+  .card {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  input, select, textarea {
+    font-size: 15px;
+  }
 }

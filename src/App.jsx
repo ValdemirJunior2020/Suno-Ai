@@ -11,6 +11,23 @@ function uid() {
   return "MM-" + Math.random().toString(16).slice(2) + "-" + Date.now();
 }
 
+// ✅ Phone helpers
+function normalizePhone(input = "") {
+  return String(input).replace(/[^\d+]/g, "").trim();
+}
+function isValidPhone(input = "") {
+  const p = normalizePhone(input);
+  const digits = p.replace(/\D/g, "");
+
+  // General rule (covers US/BR/ES/FR)
+  if (digits.length < 10 || digits.length > 15) return false;
+
+  // If user typed "+", it must be the first char
+  if (p.includes("+") && !p.startsWith("+")) return false;
+
+  return true;
+}
+
 export default function App() {
   const { t, i18n } = useTranslation();
 
@@ -57,7 +74,6 @@ export default function App() {
     [i18n, setField]
   );
 
-  // ✅ FIX #1: make this stable with useCallback so hooks can depend on it
   const getMissingForStep = useCallback(
     (s) => {
       const missing = [];
@@ -71,7 +87,12 @@ export default function App() {
 
       if (s === 2) {
         if (!form.customerName.trim()) missing.push(t("customerName") || "Your name");
-        if (!form.customerPhone.trim()) missing.push(t("customerPhone") || "Your phone number");
+
+        if (!form.customerPhone.trim()) {
+          missing.push(t("customerPhone") || "Your phone number");
+        } else if (!isValidPhone(form.customerPhone)) {
+          missing.push(t("phoneInvalid") || "Phone number looks invalid");
+        }
 
         if (!form.recipientName.trim()) missing.push(t("recipientName") || "Recipient name");
         if (!form.relationship.trim()) missing.push(t("relationship") || "Relationship");
@@ -136,9 +157,8 @@ export default function App() {
       priceUSD: 10,
       payerEmail: payerEmail || "",
 
-      // ✅ NEW
       customerName: form.customerName,
-      customerPhone: form.customerPhone,
+      customerPhone: normalizePhone(form.customerPhone),
 
       status,
       occasion: occasionValue,
@@ -172,8 +192,6 @@ export default function App() {
 
   const checkoutValid = checkoutMissing.length === 0;
 
-  // ✅ FIX #2: no useMemo needed; just compute the object.
-  // Outer-scope env consts don't need dependency arrays.
   const paypalOptions = {
     "client-id": PAYPAL_CLIENT_ID || "",
     currency: "USD",
@@ -195,27 +213,46 @@ export default function App() {
               </div>
             </div>
 
+            {/* ✅ FLAGS ONLY (no text) */}
             <div className="lang">
-              <span className="small">{t("language")}:</span>
-
-              <button className={i18n.language === "en" ? "active" : ""} onClick={() => switchLang("en")}>
-                <img className="flag" src="/flags/us.svg" alt="US" />
-                EN
+              <button
+                type="button"
+                className={`langBtn ${i18n.language === "en" ? "active" : ""}`}
+                onClick={() => switchLang("en")}
+                aria-label="English"
+                title="English"
+              >
+                <img className="flag" src="/flags/us.svg" alt="USA flag" />
               </button>
 
-              <button className={i18n.language === "es" ? "active" : ""} onClick={() => switchLang("es")}>
-                <img className="flag" src="/flags/es.svg" alt="ES" />
-                ES
+              <button
+                type="button"
+                className={`langBtn ${i18n.language === "es" ? "active" : ""}`}
+                onClick={() => switchLang("es")}
+                aria-label="Español"
+                title="Español"
+              >
+                <img className="flag" src="/flags/es.svg" alt="Spain flag" />
               </button>
 
-              <button className={i18n.language === "fr" ? "active" : ""} onClick={() => switchLang("fr")}>
-                <img className="flag" src="/flags/fr.svg" alt="FR" />
-                FR
+              <button
+                type="button"
+                className={`langBtn ${i18n.language === "fr" ? "active" : ""}`}
+                onClick={() => switchLang("fr")}
+                aria-label="Français"
+                title="Français"
+              >
+                <img className="flag" src="/flags/fr.svg" alt="France flag" />
               </button>
 
-              <button className={i18n.language === "pt" ? "active" : ""} onClick={() => switchLang("pt")}>
-                <img className="flag" src="/flags/br.svg" alt="BR" />
-                PT
+              <button
+                type="button"
+                className={`langBtn ${i18n.language === "pt" ? "active" : ""}`}
+                onClick={() => switchLang("pt")}
+                aria-label="Português"
+                title="Português"
+              >
+                <img className="flag" src="/flags/br.svg" alt="Brazil flag" />
               </button>
             </div>
           </div>
@@ -277,6 +314,7 @@ export default function App() {
                       value={form.customerPhone}
                       onChange={(e) => setField("customerPhone", e.target.value)}
                       placeholder="+1 754 366 9922"
+                      inputMode="tel"
                     />
                   </div>
                 </div>
@@ -370,7 +408,7 @@ export default function App() {
                   </div>
                   <div>
                     <div className="small">{t("customerPhone")}</div>
-                    <div style={{ fontWeight: 800 }}>{form.customerPhone}</div>
+                    <div style={{ fontWeight: 800 }}>{normalizePhone(form.customerPhone)}</div>
                   </div>
                 </div>
 
