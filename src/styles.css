@@ -1,0 +1,85 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: #fff; }
+
+.page {
+  min-height: 100vh;
+  background: url("/bg.png") center/cover no-repeat fixed;
+  position: relative;
+}
+
+.overlay {
+  min-height: 100vh;
+  background: rgba(7, 10, 20, 0.72);
+  padding: 28px 16px 42px;
+}
+
+.container { max-width: 980px; margin: 0 auto; }
+
+.header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.brand h1 { margin: 0; font-size: 34px; letter-spacing: 0.3px; }
+.brand p { margin: 6px 0 0; opacity: 0.9; }
+
+.card {
+  margin-top: 18px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.row {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+
+label { display: block; font-size: 13px; margin-bottom: 6px; opacity: 0.95; }
+
+input, textarea, select {
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(0,0,0,0.35);
+  color: #fff;
+  outline: none;
+}
+textarea { min-height: 110px; resize: vertical; }
+
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn { background: rgba(255,255,255,0.14); color: #fff; }
+.btnPrimary { background: #2b7cff; color: #fff; }
+
+.small { font-size: 12px; opacity: 0.9; }
+
+.lang { display: flex; gap: 8px; align-items: center; }
+.lang button { padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,0.12); color: #fff; }
+.lang button.active { outline: 2px solid rgba(43,124,255,0.85); }
+
+.hr { margin: 14px 0; border-top: 1px solid rgba(255,255,255,0.14); }
+.success { color: #7CFF9C; font-weight: 700; }
+.error { color: #ff8a8a; font-weight: 700; }
