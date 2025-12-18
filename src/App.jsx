@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
@@ -23,7 +23,7 @@ export default function App() {
     package: "2_songs",
     priceUSD: 10,
 
-    // ✅ NEW: buyer info (required)
+    // buyer (required)
     customerName: "",
     customerPhone: "",
 
@@ -44,62 +44,85 @@ export default function App() {
   const styleValue = form.musicStyle === "Other" ? form.musicStyleOther : form.musicStyle;
   const moodValue = form.mood === "Other" ? form.moodOther : form.mood;
 
-  function setField(key, value) {
+  const setField = useCallback((key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setValidationMsg("");
-  }
+  }, []);
 
-  function switchLang(lng) {
-    i18n.changeLanguage(lng);
-    setField("languages", lng);
-  }
+  const switchLang = useCallback(
+    (lng) => {
+      i18n.changeLanguage(lng);
+      setField("languages", lng);
+    },
+    [i18n, setField]
+  );
 
-  function getMissingForStep(s) {
-    const missing = [];
+  // ✅ FIX #1: make this stable with useCallback so hooks can depend on it
+  const getMissingForStep = useCallback(
+    (s) => {
+      const missing = [];
 
-    if (s === 1) {
-      if (!form.occasion?.trim()) missing.push(t("occasion") || "Occasion");
-      if (form.occasion === "Other" && !form.occasionOther.trim())
-        missing.push(t("occasionOther") || "Occasion (Other)");
-    }
+      if (s === 1) {
+        if (!form.occasion?.trim()) missing.push(t("occasion") || "Occasion");
+        if (form.occasion === "Other" && !form.occasionOther.trim()) {
+          missing.push(t("occasionOther") || "Occasion (Other)");
+        }
+      }
 
-    if (s === 2) {
-      if (!form.customerName.trim()) missing.push(t("customerName") || "Your name");
-      if (!form.customerPhone.trim()) missing.push(t("customerPhone") || "Your phone number");
+      if (s === 2) {
+        if (!form.customerName.trim()) missing.push(t("customerName") || "Your name");
+        if (!form.customerPhone.trim()) missing.push(t("customerPhone") || "Your phone number");
 
-      if (!form.recipientName.trim()) missing.push(t("recipientName") || "Recipient name");
-      if (!form.relationship.trim()) missing.push(t("relationship") || "Relationship");
-      if (!form.dedication.trim()) missing.push(t("dedication") || "Dedication");
-    }
+        if (!form.recipientName.trim()) missing.push(t("recipientName") || "Recipient name");
+        if (!form.relationship.trim()) missing.push(t("relationship") || "Relationship");
+        if (!form.dedication.trim()) missing.push(t("dedication") || "Dedication");
+      }
 
-    if (s === 3) {
-      if (!form.musicStyle?.trim()) missing.push(t("songStyle") || "Music style");
-      if (form.musicStyle === "Other" && !form.musicStyleOther.trim())
-        missing.push(t("styleOther") || "Music style (Other)");
+      if (s === 3) {
+        if (!form.musicStyle?.trim()) missing.push(t("songStyle") || "Music style");
+        if (form.musicStyle === "Other" && !form.musicStyleOther.trim()) {
+          missing.push(t("styleOther") || "Music style (Other)");
+        }
 
-      if (!form.mood?.trim()) missing.push(t("mood") || "Mood");
-      if (form.mood === "Other" && !form.moodOther.trim())
-        missing.push(t("moodOther") || "Mood (Other)");
-    }
+        if (!form.mood?.trim()) missing.push(t("mood") || "Mood");
+        if (form.mood === "Other" && !form.moodOther.trim()) {
+          missing.push(t("moodOther") || "Mood (Other)");
+        }
+      }
 
-    return missing;
-  }
+      return missing;
+    },
+    [
+      form.occasion,
+      form.occasionOther,
+      form.customerName,
+      form.customerPhone,
+      form.recipientName,
+      form.relationship,
+      form.dedication,
+      form.musicStyle,
+      form.musicStyleOther,
+      form.mood,
+      form.moodOther,
+      t,
+    ]
+  );
 
-  const canGoNext = useMemo(() => getMissingForStep(step).length === 0, [step, form]);
+  const canGoNext = useMemo(() => getMissingForStep(step).length === 0, [getMissingForStep, step]);
 
-  function next() {
+  const next = useCallback(() => {
     const missing = getMissingForStep(step);
     if (missing.length) {
       setValidationMsg(`${t("requiredMissing") || "Missing required fields"}: ${missing.join(", ")}`);
       return;
     }
     setStep((s) => Math.min(4, s + 1));
-  }
+  }, [getMissingForStep, step, t]);
 
-  function back() {
+  const back = useCallback(() => {
     setValidationMsg("");
     setStep((s) => Math.max(1, s - 1));
-  }
+  }, []);
 
   async function saveToSheet({ orderId, payerEmail, status }) {
     if (!SHEETS_API_URL) throw new Error("Missing VITE_SHEETS_API_URL");
@@ -113,7 +136,7 @@ export default function App() {
       priceUSD: 10,
       payerEmail: payerEmail || "",
 
-      // ✅ NEW fields
+      // ✅ NEW
       customerName: form.customerName,
       customerPhone: form.customerPhone,
 
@@ -142,29 +165,21 @@ export default function App() {
     setSavedStatus("saved");
   }
 
-  // ✅ PayPal provider expects "client-id" (NOT clientId)
-  const paypalOptions = useMemo(() => {
-    return {
-      "client-id": PAYPAL_CLIENT_ID || "",
-      currency: "USD",
-      intent: "CAPTURE",
-      components: "buttons",
-    };
-  }, [PAYPAL_CLIENT_ID]);
-
-  // Block checkout if any step would still fail
   const checkoutMissing = useMemo(() => {
-    const all = [
-      ...getMissingForStep(1),
-      ...getMissingForStep(2),
-      ...getMissingForStep(3),
-    ];
-    // de-dup
+    const all = [...getMissingForStep(1), ...getMissingForStep(2), ...getMissingForStep(3)];
     return Array.from(new Set(all));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form, t]);
+  }, [getMissingForStep]);
 
   const checkoutValid = checkoutMissing.length === 0;
+
+  // ✅ FIX #2: no useMemo needed; just compute the object.
+  // Outer-scope env consts don't need dependency arrays.
+  const paypalOptions = {
+    "client-id": PAYPAL_CLIENT_ID || "",
+    currency: "USD",
+    intent: "CAPTURE",
+    components: "buttons",
+  };
 
   return (
     <div className="page">
@@ -180,30 +195,29 @@ export default function App() {
               </div>
             </div>
 
-           <div className="lang">
-  <span className="small">{t("language")}:</span>
+            <div className="lang">
+              <span className="small">{t("language")}:</span>
 
-  <button className={i18n.language === "en" ? "active" : ""} onClick={() => switchLang("en")}>
-    <img className="flag" src="/flags/us.svg" alt="US" />
-    EN
-  </button>
+              <button className={i18n.language === "en" ? "active" : ""} onClick={() => switchLang("en")}>
+                <img className="flag" src="/flags/us.svg" alt="US" />
+                EN
+              </button>
 
-  <button className={i18n.language === "es" ? "active" : ""} onClick={() => switchLang("es")}>
-    <img className="flag" src="/flags/es.svg" alt="ES" />
-    ES
-  </button>
+              <button className={i18n.language === "es" ? "active" : ""} onClick={() => switchLang("es")}>
+                <img className="flag" src="/flags/es.svg" alt="ES" />
+                ES
+              </button>
 
-  <button className={i18n.language === "fr" ? "active" : ""} onClick={() => switchLang("fr")}>
-    <img className="flag" src="/flags/fr.svg" alt="FR" />
-    FR
-  </button>
+              <button className={i18n.language === "fr" ? "active" : ""} onClick={() => switchLang("fr")}>
+                <img className="flag" src="/flags/fr.svg" alt="FR" />
+                FR
+              </button>
 
-  <button className={i18n.language === "pt" ? "active" : ""} onClick={() => switchLang("pt")}>
-    <img className="flag" src="/flags/br.svg" alt="BR" />
-    PT
-  </button>
-</div>
-
+              <button className={i18n.language === "pt" ? "active" : ""} onClick={() => switchLang("pt")}>
+                <img className="flag" src="/flags/br.svg" alt="BR" />
+                PT
+              </button>
+            </div>
           </div>
 
           <div className="card">
@@ -213,7 +227,6 @@ export default function App() {
 
             {validationMsg && <div className="error" style={{ marginTop: 10 }}>{validationMsg}</div>}
 
-            {/* STEP 1 */}
             {step === 1 && (
               <>
                 <h2 style={{ margin: "10px 0 8px" }}>{t("occasion")}</h2>
@@ -244,7 +257,6 @@ export default function App() {
               </>
             )}
 
-            {/* STEP 2 */}
             {step === 2 && (
               <>
                 <h2 style={{ margin: "10px 0 8px" }}>{t("aboutPerson")}</h2>
@@ -287,10 +299,10 @@ export default function App() {
               </>
             )}
 
-            {/* STEP 3 */}
             {step === 3 && (
               <>
                 <h2 style={{ margin: "10px 0 8px" }}>{t("songStyle")}</h2>
+
                 <div className="row">
                   <div>
                     <label>{t("songStyle")}</label>
@@ -333,7 +345,6 @@ export default function App() {
               </>
             )}
 
-            {/* STEP 4 */}
             {step === 4 && (
               <>
                 <h2 style={{ margin: "10px 0 8px" }}>{t("reviewPay")}</h2>
@@ -344,7 +355,9 @@ export default function App() {
                     <div style={{ fontSize: 18, fontWeight: 900 }}>{t("packageDesc")}</div>
                   </div>
                   <div>
-                    <div className="small">{t("contact")}: <strong>{WHATSAPP_NUMBER}</strong></div>
+                    <div className="small">
+                      {t("contact")}: <strong>{WHATSAPP_NUMBER}</strong>
+                    </div>
                   </div>
                 </div>
 
@@ -387,9 +400,7 @@ export default function App() {
 
                 <div className="hr"></div>
 
-                <div style={{ marginBottom: 10, opacity: 0.95 }}>
-                  {t("payNote")}
-                </div>
+                <div style={{ marginBottom: 10, opacity: 0.95 }}>{t("payNote")}</div>
 
                 {!checkoutValid && (
                   <div className="error" style={{ marginBottom: 10 }}>
@@ -398,7 +409,9 @@ export default function App() {
                 )}
 
                 {!PAYPAL_CLIENT_ID ? (
-                  <div className="error">PayPal is not configured. Add VITE_PAYPAL_CLIENT_ID in .env and restart.</div>
+                  <div className="error">
+                    PayPal is not configured. Add VITE_PAYPAL_CLIENT_ID in .env and restart.
+                  </div>
                 ) : (
                   <PayPalScriptProvider options={paypalOptions}>
                     <PayPalButtons
