@@ -1,31 +1,29 @@
 /* ===============================
    Base (MOBILE-FIRST)
 ================================ */
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-:root {
+:root{
   --glass: rgba(255, 255, 255, 0.10);
   --glass2: rgba(255, 255, 255, 0.14);
   --text: #eef2ff;
   --muted: rgba(255, 255, 255, 0.75);
   --line: rgba(255, 255, 255, 0.16);
+
   --danger: rgba(255, 88, 88, 0.18);
   --danger-border: rgba(255, 88, 88, 0.45);
   --success: rgba(0, 255, 170, 0.14);
   --success-border: rgba(0, 255, 170, 0.45);
+
   --btn: rgba(255, 255, 255, 0.12);
   --btn-border: rgba(255, 255, 255, 0.22);
   --btn-primary: rgba(79, 176, 245, 0.25);
   --btn-primary-border: rgba(79, 176, 245, 0.55);
 }
 
-html, body {
-  height: 100%;
-}
+html, body { height: 100%; }
 
-body {
+body{
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
@@ -34,109 +32,125 @@ body {
 /* ===============================
    Background (MOBILE-FIRST)
 ================================ */
-.page {
+.page{
   min-height: 100vh;
   background-image: url("/bg.png");
   background-size: cover;
   background-position: center;
-  /* mobile-friendly (fixed can lag on phones) */
-  background-attachment: scroll;
+  background-attachment: scroll; /* phones */
 }
 
-.overlay {
+.overlay{
   min-height: 100vh;
   background: radial-gradient(circle at 20% 10%, rgba(0,0,0,0.55), rgba(0,0,0,0.82));
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  /* tighter for phones */
-  padding: 16px 12px;
+  padding: 16px 12px; /* mobile */
 }
 
 /* ===============================
-   Layout (MOBILE-FIRST)
+   Layout
 ================================ */
-.container {
+.container{
   width: 100%;
   max-width: 1100px;
 }
 
-.header {
-  display: flex;
-  flex-direction: column; /* mobile-first */
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.brand h1 {
-  margin: 0;
-  font-size: 26px; /* mobile-first */
-  letter-spacing: 0.2px;
-}
-
-.brand p {
-  margin: 6px 0 0;
-  color: var(--muted);
-  max-width: 560px;
-  line-height: 1.35;
-  font-size: 14px;
-}
-
 /* ===============================
-   Language buttons (with flags) (MOBILE-FIRST)
+   NAVBAR (single source of truth)
+   matches Navbar.jsx
 ================================ */
-.lang {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: flex-start; /* mobile-first */
-}
+.nav{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  margin-bottom: 14px;
 
-.lang .small {
-  margin-right: 4px;
-  color: var(--muted);
-}
-
-.lang button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--btn-border);
-  background: var(--btn);
+  border: 1px solid rgba(255,255,255,0.18);
+  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.06) 100%);
+  backdrop-filter: blur(14px);
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.30);
   color: var(--text);
-  cursor: pointer;
-  font-weight: 700;
-  letter-spacing: 0.2px;
-  /* better touch */
-  min-height: 36px;
 }
 
-.lang button:hover {
+.nav__inner{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 14px;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Brand */
+.nav__title{
+  font-size: 20px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.nav__subtitle{
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Description */
+.nav__description{
+  text-align: left;
+  font-size: 13px;
+  line-height: 1.35;
+  opacity: 0.95;
+}
+
+.nav__description .desc-pt{
+  margin-top: 6px;
+  opacity: 0.85;
+  font-size: 12.5px;
+}
+
+/* Flags */
+.nav__flags{
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.nav__flags button{
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(0,0,0,0.20);
+  cursor: pointer;
+
+  display: grid;
+  place-items: center;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+  transition: transform 0.15s ease;
+}
+
+.nav__flags button:hover{
   transform: translateY(-1px);
 }
 
-.lang button.active {
-  border-color: var(--btn-primary-border);
-  background: var(--btn-primary);
-}
-
-.flag {
-  width: 18px;
-  height: 18px;
+.nav__flags img{
+  width: 26px;
+  height: 26px;
   border-radius: 999px;
   object-fit: cover;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35));
 }
 
 /* ===============================
-   Card / Glass (MOBILE-FIRST)
+   Card / Glass
 ================================ */
-.card {
+.card{
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: linear-gradient(180deg, var(--glass) 0%, rgba(255,255,255,0.08) 100%);
   backdrop-filter: blur(12px);
@@ -145,21 +159,21 @@ body {
   box-shadow: 0 16px 40px rgba(0,0,0,0.35);
 }
 
-.hr {
+.hr{
   height: 1px;
   background: var(--line);
   margin: 14px 0;
 }
 
-.small {
+.small{
   font-size: 12.5px;
   color: var(--muted);
 }
 
 /* ===============================
-   Form (MOBILE-FIRST)
+   Form
 ================================ */
-label {
+label{
   display: block;
   margin-bottom: 6px;
   font-size: 13px;
@@ -167,47 +181,46 @@ label {
   font-weight: 700;
 }
 
-input, select, textarea {
+input, select, textarea{
   width: 100%;
-  padding: 12px 12px; /* mobile-first */
+  padding: 12px 12px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(0,0,0,0.25);
   color: var(--text);
   outline: none;
-  font-size: 15px; /* mobile readability */
+  font-size: 15px;
 }
 
-textarea {
+textarea{
   min-height: 120px;
   resize: vertical;
 }
 
-input::placeholder {
+input::placeholder{
   color: rgba(255,255,255,0.55);
 }
 
-/* mobile-first = 1 column */
-.row {
+/* mobile = 1 col */
+.row{
   display: grid;
   gap: 12px;
   grid-template-columns: 1fr;
 }
 
 /* ===============================
-   Buttons (MOBILE-FIRST)
+   Buttons
 ================================ */
-.actions {
+.actions{
   display: flex;
-  flex-direction: column-reverse; /* mobile-first thumb UX */
+  flex-direction: column-reverse;
   gap: 10px;
-  justify-content: space-between;
   margin-top: 16px;
 }
 
-.btn, .btnPrimary {
+.btn, .btnPrimary{
   border-radius: 12px;
-  padding: 14px 14px; /* bigger for touch */
+  padding: 14px 14px;
   font-weight: 900;
   cursor: pointer;
   border: 1px solid var(--btn-border);
@@ -217,20 +230,20 @@ input::placeholder {
   font-size: 16px;
 }
 
-.btnPrimary {
+.btnPrimary{
   border-color: var(--btn-primary-border);
   background: var(--btn-primary);
 }
 
-.btn:disabled, .btnPrimary:disabled {
+.btn:disabled, .btnPrimary:disabled{
   opacity: 0.45;
   cursor: not-allowed;
 }
 
 /* ===============================
-   Notices (MOBILE-FIRST)
+   Notices
 ================================ */
-.notice {
+.notice{
   margin-top: 10px;
   display: inline-block;
   padding: 8px 10px;
@@ -239,7 +252,7 @@ input::placeholder {
   background: rgba(0,0,0,0.18);
 }
 
-.error {
+.error{
   padding: 12px;
   border-radius: 12px;
   background: var(--danger);
@@ -248,7 +261,7 @@ input::placeholder {
   line-height: 1.35;
 }
 
-.success {
+.success{
   padding: 12px;
   border-radius: 12px;
   background: var(--success);
@@ -257,452 +270,66 @@ input::placeholder {
 }
 
 /* ===============================
-   DESKTOP ENHANCEMENTS (min-width)
+   Media Examples page
 ================================ */
-@media (min-width: 821px) {
-  .overlay {
-    padding: 28px 14px;
-  }
-
-  .header {
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-  }
-
-  .brand h1 {
-    font-size: 34px;
-  }
-
-  .brand p {
-    font-size: 15px;
-  }
-
-  .lang {
-    justify-content: flex-end;
-  }
-
-  /* desktop = 2 columns */
-  .row {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  /* desktop buttons side-by-side */
-  .actions {
-    flex-direction: row;
-  }
-
-  /* desktop background parallax */
-  .page {
-    background-attachment: fixed;
-  }
-
-  .card {
-    padding: 18px;
-    border-radius: 18px;
-  }
-
-  input, select, textarea {
-    font-size: 15px;
-  }
-}
-/* ===============================
-   Media Examples
-================================ */
-.mediaList {
+.mediaGrid{
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
   margin-top: 12px;
 }
 
-.mediaCard {
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(0,0,0,0.18);
-  border-radius: 14px;
-  padding: 12px;
-}
-
-.mediaTitle {
-  font-weight: 900;
-  margin-bottom: 10px;
-}
-
-@media (min-width: 900px) {
-  .mediaList {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-.navbar {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 12px;
-}
-
-.flagRow {
-  display: flex;
-  gap: 10px;
-}
-
-.flagBtn {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.25);
-  background: rgba(0,0,0,0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.45);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.flagBtn img {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-}
-
-.flagBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-}
-
-.flagBtn.active {
-  outline: 2px solid #4fb0f5;
-}
-/* ===============================
-   NAVBAR
-================================ */
-.nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  margin-bottom: 14px;
-
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.06) 100%);
-  backdrop-filter: blur(12px);
-  border-radius: 18px;
-  padding: 12px 14px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.30);
-}
-
-.nav__left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-
-.nav__brand {
-  min-width: 0;
-}
-
-.nav__title {
-  font-weight: 900;
-  font-size: 18px;
-  line-height: 1.1;
-}
-
-.nav__subtitle {
-  margin-top: 3px;
-  font-size: 12.5px;
-  color: var(--muted);
-}
-
-.nav__links {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.navLink {
-  text-decoration: none;
-  color: var(--text);
-  font-weight: 900;
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid transparent;
-  background: transparent;
-  opacity: 0.95;
-}
-
-.navLink:hover {
-  border-color: rgba(255,255,255,0.18);
-  background: rgba(255,255,255,0.08);
-}
-
-.navLink.active {
-  border-color: var(--btn-primary-border);
-  background: var(--btn-primary);
-}
-
-.nav__right {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-/* ===============================
-   Flags (icons only)
-================================ */
-.flagRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.flagBtn {
-  width: 42px;
-  height: 34px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.22);
-  background: rgba(255,255,255,0.10);
-  cursor: pointer;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  box-shadow:
-    0 10px 20px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.18);
-}
-
-.flagBtn:hover {
-  transform: translateY(-1px);
-}
-
-.flagBtn.active {
-  border-color: var(--btn-primary-border);
-  background: rgba(79,176,245,0.22);
-}
-
-.flagIcon {
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  object-fit: cover;
-  box-shadow:
-    0 8px 14px rgba(0,0,0,0.35),
-    inset 0 1px 0 rgba(255,255,255,0.22);
-}
-
-/* ===============================
-   Mobile-first navbar stacking
-================================ */
-@media (max-width: 820px) {
-  .nav {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .nav__left {
-    width: 100%;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .nav__links {
-    width: 100%;
-    flex-wrap: wrap;
-  }
-
-  .nav__right {
-    width: 100%;
-    justify-content: flex-start;
-  }
-}
-
-/* ===============================
-   Media page layout
-================================ */
-.mediaGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-.mediaCard {
+.mediaCard{
   border: 1px solid rgba(255, 255, 255, 0.16);
   background: rgba(0,0,0,0.20);
   border-radius: 14px;
   padding: 14px;
 }
 
-@media (min-width: 900px) {
-  .mediaGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-/* ===== NAVBAR layout ===== */
-.nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* left + right */
-  gap: 14px;
-}
-
-/* left side (brand + links) */
-.navLeft {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-}
-
-/* right side (flags) */
-.navRight {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* flag buttons */
-.flagRow {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.flagBtn {
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.22);
-  background: rgba(255,255,255,0.10);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-}
-
-.flagBtn.active {
-  border-color: rgba(79, 176, 245, 0.85);
-  box-shadow: 0 0 0 3px rgba(79, 176, 245, 0.22);
-}
-
-.flagBtn img {
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  object-fit: cover;
-  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.35));
-}
-.nav a { color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 800; padding: 8px 10px; border-radius: 999px; }
-.nav a.activeLink { background: rgba(79,176,245,0.25); border: 1px solid rgba(79,176,245,0.55); }
-.navBar{
-  width:100%;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.08) 100%);
-  backdrop-filter: blur(12px);
-  border-radius: 18px;
-  padding: 14px 14px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.25);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.navLeft{
-  display:flex;
-  align-items:center;
-  gap: 16px;
-  min-width: 0;
-}
-
-.navBrand{
-  display:flex;
-  flex-direction:column;
-  min-width: 0;
-}
-
-.navTitle{
+.mediaTitle{
   font-weight: 900;
-  font-size: 18px;
-  line-height: 1.1;
+  margin-bottom: 10px;
 }
 
-.navSub{
-  opacity: 0.85;
-  font-size: 12px;
-  line-height: 1.2;
-}
+/* ===============================
+   DESKTOP ENHANCEMENTS
+================================ */
+@media (min-width: 821px){
+  .overlay{ padding: 28px 14px; }
+  .page{ background-attachment: fixed; }
 
-.navLinks{
-  display:flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.navLink{
-  text-decoration:none;
-  color: var(--text);
-  font-weight: 900;
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(0,0,0,0.18);
-}
-
-.navLink.active{
-  border-color: var(--btn-primary-border);
-  background: var(--btn-primary);
-}
-
-.navRight{
-  display:flex;
-  align-items:center;
-  justify-content:flex-end;
-}
-
-.flagRow{
-  display:flex;
-  align-items:center;
-  gap: 10px;
-}
-
-.flagBtn{
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.22);
-  background: rgba(0,0,0,0.20);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
-}
-
-.flagBtn:hover{ transform: translateY(-1px); }
-
-.flagBtn.active{
-  border-color: var(--btn-primary-border);
-  box-shadow: 0 12px 26px rgba(0,0,0,0.35);
-}
-
-.flag{
-  width: 26px;
-  height: 26px;
-  border-radius: 999px;
-  object-fit: cover;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.28);
-}
-
-@media (max-width: 720px){
-  .navBar{
-    flex-direction: column;
-    align-items: flex-start;
+  /* navbar goes 3 cols */
+  .nav__inner{
+    grid-template-columns: 1fr 2fr auto;
+    gap: 16px;
   }
-  .navRight{
-    width: 100%;
+
+  .nav__description{
+    text-align: center;
+  }
+
+  .nav__flags{
     justify-content: flex-end;
+  }
+
+  /* form rows go 2 cols */
+  .row{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* buttons side-by-side */
+  .actions{
+    flex-direction: row;
+  }
+
+  .card{
+    padding: 18px;
+    border-radius: 18px;
+  }
+}
+
+@media (min-width: 900px){
+  .mediaGrid{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

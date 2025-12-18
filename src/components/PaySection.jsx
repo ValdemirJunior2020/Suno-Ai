@@ -1,45 +1,42 @@
-import React from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
-export default function PaySection({ amount = "10.00", onPaid }) {
-  const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID;
+const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID;
 
+export default function PaySection({ amountUSD = "10.00", onApprove }) {
   if (!PAYPAL_CLIENT_ID) {
     return (
       <div className="error">
-        PayPal not configured. Add VITE_PAYPAL_CLIENT_ID in .env and restart.
+        PayPal is not configured. Add VITE_PAYPAL_CLIENT_ID in your .env and restart.
       </div>
     );
   }
 
+  const options = {
+    clientId: PAYPAL_CLIENT_ID,
+    currency: "USD",
+    intent: "capture", // ✅ MUST be lowercase "capture"
+    components: "buttons",
+  };
+
   return (
-    <div style={{ marginTop: 12 }}>
-      <PayPalScriptProvider
-        options={{
-          clientId: PAYPAL_CLIENT_ID,
-          currency: "USD",
-          intent: "CAPTURE",
-          components: "buttons"
+    <PayPalScriptProvider options={options}>
+      <PayPalButtons
+        style={{ layout: "vertical" }}
+        createOrder={(data, actions) => {
+          return actions.order.create({
+            purchase_units: [
+              {
+                description: "MelodyMagic - 2 songs",
+                amount: { currency_code: "USD", value: amountUSD },
+              },
+            ],
+          });
         }}
-      >
-        <PayPalButtons
-          style={{ layout: "vertical" }}
-          createOrder={(data, actions) => {
-            return actions.order.create({
-              purchase_units: [
-                {
-                  description: "MelodyMagic - 2 songs",
-                  amount: { currency_code: "USD", value: amount }
-                }
-              ]
-            });
-          }}
-          onApprove={async (data, actions) => {
-            const details = await actions.order.capture();
-            await onPaid({ orderID: data.orderID, details });
-          }}
-        />
-      </PayPalScriptProvider>
-    </div>
+        onApprove={async (data, actions) => {
+          const details = await actions.order.capture();
+          onApprove?.({ data, details });
+        }}
+      />
+    </PayPalScriptProvider>
   );
 }
